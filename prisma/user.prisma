@@ -1,9 +1,50 @@
-model User {   
-  id    Int     @id @default(autoincrement())   
-  email String  @unique   
-  name  String   
-  created_at DateTime @default(now())
-   
-  @@map("users") 
+model User {
+  id          String    @id @default(uuid()) @db.Char(36)
+  email       String    @unique
+  username    String
+  roleId      String?
+  role        Role?     @relation(fields: [roleId], references: [id])
+  password    String?
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  deletedAt   DateTime?
+
+  sessions  Session[]
+  loginLogs LoginLog[]
+
+  @@index([createdAt])
+  @@map("users")
+  @@schema("portfolio")
+}
+
+model Session {
+  id           String   @id @default(uuid()) @db.Char(36)
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  refreshToken String   @db.Text
+  expiresAt    DateTime
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
+  deletedAt DateTime?
+
+  @@index([userId])
+  @@index([deletedAt])
+  @@index([expiresAt])
+  @@schema("portfolio")
+}
+
+model LoginLog {
+  id        String  @id @default(uuid()) @db.Char(36)
+  userId    String
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ip        String  @db.VarChar(45)
+  userAgent String? @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([ip])
+  @@index([createdAt])
   @@schema("portfolio")
 }

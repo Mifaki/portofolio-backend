@@ -1,38 +1,73 @@
 import { CreateUserDto, UpdateUserDto } from "./user.dto";
 
+import { hashPassword } from "@/middleware/auth";
+import { httpError } from "@/utils/error";
 import { prisma } from "@/config/prisma";
 
+const userSelect = {
+  id: true,
+  email: true,
+  username: true,
+  role: { select: { id: true, name: true } },
+  lastLoginAt: true,
+  createdAt: true,
+};
+
 export async function getAllUsers() {
-    return prisma.user.findMany();
+  return prisma.user.findMany({
+    where: { deletedAt: null },
+    select: userSelect,
+  });
+}
+
+export async function getUserById(id: string) {
+  const user = await prisma.user.findFirst({
+    where: { id, deletedAt: null },
+    select: userSelect,
+  });
+  if (!user) throw httpError(404, "User not found");
+  return user;
 }
 
 export async function createUser(dto: CreateUserDto) {
-    return prisma.user.create({
-        data: dto,
-    });
+  const existing = await prisma.user.findFirst({
+    where: { email: dto.email },
+  });
+  if (existing) throw httpError(409, "Email already in use");
+
+  const hashed = await hashPassword(dto.password);
+  return prisma.user.create({
+    data: {
+      email: dto.email,
+      username: dto.username,
+      password: hashed,
+      roleId: dto.roleId,
+    },
+    select: userSelect,
+  });
 }
 
-export async function getUserById(id: number) {
-    return prisma.user.findUnique({
-        where: {
-            id: id,
-        },
-    });
+export async function updateUser(id: string, dto: UpdateUserDto) {
+  await getUserById(id);
+
+  const data: UpdateUserDto & { password?: string } = { ...dto };
+  if (dto.password) {
+    data.password = await hashPassword(dto.password);
+  }
+
+  return prisma.user.update({
+    where: { id },
+    data,
+    select: userSelect,
+  });
 }
 
-export async function updateUser(id: number, dto: UpdateUserDto) {
-    return prisma.user.update({
-        where: {
-            id: id,
-        },
-        data: dto,
-    });
-}
+export async function deleteUser(id: string) {
+  await getUserById(id);
 
-export async function deleteUser(id: number) {
-    return prisma.user.delete({
-        where: {
-            id: id,
-        },
-    });
+  return prisma.user.update({
+    where: { id },
+    data: { deletedAt: new Date() },
+    select: { id: true, email: true, username: true },
+  });
 }
