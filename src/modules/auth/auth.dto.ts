@@ -78,3 +78,25 @@ export const otpVerifySchema = Joi.object<OtpVerifyBody>({
     "any.required": "OTP code is required.",
   }),
 });
+
+export const loginRequestResponseSchema = Joi.object({
+  email: Joi.string().email().description("Masked email address (e.g. us***@domain.com)"),
+});
+
+export const verifyOtpResponseSchema = Joi.object({
+  token: Joi.string(),
+  refreshToken: Joi.string(),
+  user: Joi.object({
+    id: Joi.string().uuid(),
+    username: Joi.string(),
+    email: Joi.string().email(),
+    role: Joi.string().allow(null),
+    lastLoginAt: Joi.date().allow(null),
+    createdAt: Joi.date(),
+  }),
+});
+
+export const refreshResponseSchema = Joi.object({
+  token: Joi.string(),
+  refreshToken: Joi.string(),
+});

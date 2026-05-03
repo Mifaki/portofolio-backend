@@ -45,3 +45,23 @@ export const updateUserSchema: ObjectSchema<UpdateUserDto> =
     }),
     roleId: Joi.string().optional(),
   }).min(1);
+
+
+const userSchema = Joi.object({
+  id: Joi.string().uuid(),
+  email: Joi.string().email(),
+  username: Joi.string(),
+  role: Joi.object({ id: Joi.string(), name: Joi.string() }).allow(null),
+  lastLoginAt: Joi.date().allow(null),
+  createdAt: Joi.date(),
+});
+
+export const getAllUsersResponseSchema = Joi.array().items(userSchema);
+export const getUserByIdResponseSchema = userSchema;
+export const createUserResponseSchema = userSchema;
+export const updateUserResponseSchema = userSchema;
+export const deleteUserResponseSchema = Joi.object({
+  id: Joi.string().uuid(),
+  email: Joi.string().email(),
+  username: Joi.string(),
+});
