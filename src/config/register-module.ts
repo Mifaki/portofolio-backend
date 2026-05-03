@@ -3,6 +3,7 @@ import auth from "@/modules/auth/auth.route";
 import fs from "fs";
 import healthRoute from "@/modules/health/health.route";
 import path from "path";
+import projectRoute from "@/modules/project/project.route";
 import swaggerUi from "swagger-ui-express";
 import userRoute from "@/modules/user/user.route";
 
@@ -24,4 +25,5 @@ export default (app: Application) => {
   app.use("/health", healthRoute);
   app.use("/users", userRoute);
   app.use("/auth", auth);
+  app.use("/projects", projectRoute);
 };

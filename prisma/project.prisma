@@ -1,0 +1,77 @@
+enum TextType {
+  headline
+  regular
+
+  @@schema("portfolio")
+}
+
+enum ImageType {
+  thumbnail
+  normal
+
+  @@schema("portfolio")
+}
+
+enum ImageOrientation {
+  landscape
+  portrait
+
+  @@schema("portfolio")
+}
+
+model Project {
+  id         String    @id @default(uuid()) @db.Char(36)
+  position   Int
+  title      String    @unique @db.VarChar(255)
+  category   String    @db.VarChar(100)
+  type       String    @db.VarChar(100)
+  year       String    @db.Char(4)
+
+  texts      ProjectText[]
+  images     ProjectImage[]
+
+  createdAt  DateTime  @default(now())
+  modifiedAt DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  @@index([createdAt])
+  @@index([category])
+  @@index([type])
+  @@index([deletedAt])
+  @@map("Projects")
+  @@schema("portfolio")
+}
+
+model ProjectText {
+  id         String    @id @default(uuid()) @db.Char(36)
+  projectId  String    @db.Char(36)
+  project    Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type       TextType
+  content    String    @db.Text
+
+  createdAt  DateTime  @default(now())
+  modifiedAt DateTime  @updatedAt
+
+  @@index([projectId])
+  @@index([projectId, type])
+  @@map("projectTexts")
+  @@schema("portfolio")
+}
+
+model ProjectImage {
+  id          String           @id @default(uuid()) @db.Char(36)
+  projectId   String           @db.Char(36)
+  project     Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  type        ImageType
+  orientation ImageOrientation
+  imageUrl    String           @db.Text
+
+  createdAt   DateTime         @default(now())
+  modifiedAt  DateTime         @updatedAt
+
+  @@index([projectId])
+  @@index([projectId, type])
+  @@index([projectId, orientation])
+  @@map("projectImages")
+  @@schema("portfolio")
+}
