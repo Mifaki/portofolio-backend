@@ -7,6 +7,8 @@ import { wrapRouter } from "@/utils/wrap-router";
 const router = Router();
 router.post("/login", AuthCtrl.loginRequest);
 router.post("/refresh", AuthCtrl.refresh);
+router.post("/otp/request", AuthCtrl.requestOtp);
+router.post("/otp/verify", AuthCtrl.verifyOtp);
 
 router.use(authenticate);
 router.post("/logout", AuthCtrl.logout);

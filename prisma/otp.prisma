@@ -1,0 +1,12 @@
+model OtpCode {
+  id        String    @id @default(uuid()) @db.Char(36)
+  email     String    @db.VarChar(255)
+  code      String    @db.Char(6)
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  @@index([email])
+  @@index([expiresAt])
+  @@schema("portfolio")
+}

@@ -1,21 +1,42 @@
-import { SessionPayload, Tokens } from "./auth.dto";
-import {
-  comparePassword,
-  generateSingleToken,
-  generateTokens,
-} from "@/middleware/auth";
-
-import { REFRESH_TOKEN_EXPIRES_IN } from "@/config/variable";
+import { OtpSentPayload, SessionPayload, Tokens } from "./auth.dto";
+import { comparePassword, generateSingleToken, generateTokens } from "@/middleware/auth";
+import { OTP_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN } from "@/config/variable";
 import { httpError } from "@/utils/error";
 import { parseDurationToSeconds } from "@/utils/parse";
 import { prisma } from "@/config/prisma";
+import { randomInt } from "crypto";
+import { sendOtpEmail } from "@/utils/mailer";
+
+const OTP_EXPIRES_SECONDS = parseDurationToSeconds(OTP_EXPIRES_IN);
+const OTP_EXPIRES_MINUTES = Math.round(OTP_EXPIRES_SECONDS / 60);
+
+function maskEmail(email: string): string {
+  const [local, domain] = email.split("@");
+  return `${local.slice(0, 2)}***@${domain}`;
+}
+
+async function issueOtp(email: string): Promise<void> {
+  const code = randomInt(100000, 999999).toString();
+
+  await prisma.otpCode.deleteMany({ where: { email, usedAt: null } });
+
+  await prisma.otpCode.create({
+    data: {
+      email,
+      code,
+      expiresAt: new Date(Date.now() + OTP_EXPIRES_SECONDS * 1000),
+    },
+  });
+
+  await sendOtpEmail(email, code, OTP_EXPIRES_MINUTES);
+}
 
 export async function authenticateUser(
   identifier: string,
   password: string,
   ip: string,
   userAgent?: string,
-): Promise<SessionPayload> {
+): Promise<OtpSentPayload> {
   const input = identifier.toLowerCase();
 
   const user = await prisma.user.findFirst({
@@ -37,12 +58,9 @@ export async function authenticateUser(
     data: { userId: user.id, ip, userAgent },
   });
 
-  await prisma.user.update({
-    where: { id: user.id },
-    data: { lastLoginAt: new Date() },
-  });
+  await issueOtp(user.email);
 
-  return createSession(user.id);
+  return { email: maskEmail(user.email) };
 }
 
 export async function getUser(identifier: string) {
@@ -53,7 +71,7 @@ export async function getUser(identifier: string) {
   });
 }
 
-async function createSession(userId: string): Promise<SessionPayload> {
+export async function createSession(userId: string): Promise<SessionPayload> {
   const user = await prisma.user.findUnique({
     where: { id: userId },
     include: { role: true },
@@ -133,4 +151,64 @@ export async function refreshToken(oldRefresh: string): Promise<Tokens> {
 
 export async function logout(userId: string): Promise<void> {
   await prisma.session.deleteMany({ where: { userId } });
+}
+
+export async function requestOtp(email: string): Promise<void> {
+  const normalized = email.toLowerCase();
+
+  const user = await prisma.user.findFirst({
+    where: { email: normalized, deletedAt: null },
+  });
+  if (!user) throw httpError(404, "No account found with this email");
+
+  const recentOtp = await prisma.otpCode.findFirst({
+    where: {
+      email: normalized,
+      usedAt: null,
+      createdAt: { gte: new Date(Date.now() - 60_000) },
+    },
+  });
+  if (recentOtp) {
+    throw httpError(429, "Please wait 60 seconds before requesting another OTP");
+  }
+
+  await issueOtp(normalized);
+}
+
+export async function verifyOtp(
+  email: string,
+  code: string,
+): Promise<SessionPayload> {
+  const normalized = email.toLowerCase();
+
+  const otp = await prisma.otpCode.findFirst({
+    where: { email: normalized, usedAt: null },
+    orderBy: { createdAt: "desc" },
+  });
+
+  if (!otp) throw httpError(400, "No active OTP found for this email");
+
+  if (new Date() > otp.expiresAt) {
+    await prisma.otpCode.delete({ where: { id: otp.id } }).catch(() => {});
+    throw httpError(400, "OTP has expired, please request a new one");
+  }
+
+  if (otp.code !== code) throw httpError(400, "Invalid OTP code");
+
+  await prisma.otpCode.update({
+    where: { id: otp.id },
+    data: { usedAt: new Date() },
+  });
+
+  const user = await prisma.user.findFirst({
+    where: { email: normalized, deletedAt: null },
+  });
+  if (!user) throw httpError(404, "No account found with this email");
+
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { lastLoginAt: new Date() },
+  });
+
+  return createSession(user.id);
 }

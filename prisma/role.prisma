@@ -13,3 +13,4 @@ model Role {
     @@index([deletedAt])
     @@schema("portfolio")
 }
+
