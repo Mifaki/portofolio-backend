@@ -31,3 +31,6 @@ export const SMTP_USER = getEnv("SMTP_USER");
 export const SMTP_PASS = getEnv("SMTP_PASS");
 export const SMTP_FROM = getEnv("SMTP_FROM");
 export const OTP_EXPIRES_IN = getEnv("OTP_EXPIRES_IN", "5m");
+export const ALLOWED_ORIGINS = getEnv('ALLOWED_ORIGINS').split(',');
+export const ALLOWED_HEADERS = getEnv('ALLOWED_HEADERS', 'Content-Type,Authorization,Accept');
+export const ALLOWED_METHODS = getEnv('ALLOWED_METHODS', 'HEAD,GET,PUT,PATCH,POST,DELETE');

@@ -1,7 +1,8 @@
-import { CreateUserDto, UpdateUserDto } from "./user.dto";
+import { CreateUserDto, GetUsersQueryDto, UpdateUserDto } from "./user.dto";
 
 import { hashPassword } from "@/middleware/auth";
 import { httpError } from "@/utils/error";
+import { paginate, toPrismaPage } from "@/utils/pagination";
 import { prisma } from "@/config/prisma";
 
 const userSelect = {
@@ -13,11 +14,26 @@ const userSelect = {
   createdAt: true,
 };
 
-export async function getAllUsers() {
-  return prisma.user.findMany({
-    where: { deletedAt: null },
-    select: userSelect,
-  });
+export async function getAllUsers(query: GetUsersQueryDto) {
+  const { skip, take } = toPrismaPage(query);
+  const where = {
+    deletedAt: null,
+    ...(query.q
+      ? {
+          OR: [
+            { email: { contains: query.q, mode: "insensitive" as const } },
+            { username: { contains: query.q, mode: "insensitive" as const } },
+          ],
+        }
+      : {}),
+  };
+
+  const [items, total] = await Promise.all([
+    prisma.user.findMany({ where, select: userSelect, skip, take, orderBy: { createdAt: "desc" } }),
+    prisma.user.count({ where }),
+  ]);
+
+  return paginate(items, total, query);
 }
 
 export async function getUserById(id: string) {

@@ -2,11 +2,16 @@ import * as R from "@/utils/response";
 import * as UserService from "./user.service";
 
 import { Request, Response } from "express";
-import { createUserSchema, updateUserSchema } from "./user.dto";
+import { createUserSchema, getUsersQuerySchema, updateUserSchema } from "./user.dto";
 
 export async function getAllUsersHandler(req: Request, res: Response) {
-  const users = await UserService.getAllUsers();
-  R.ok(res, "List of all users", users);
+  const { error, value } = getUsersQuerySchema.validate(req.query);
+  if (error) {
+    R.badRequest(res, error.details[0].message);
+    return;
+  }
+  const result = await UserService.getAllUsers(value);
+  R.ok(res, "List of all users", result);
 }
 
 export async function getUserByIdHandler(req: Request, res: Response) {

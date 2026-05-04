@@ -1,11 +1,13 @@
 import "dotenv/config";
 
+import { cors } from "./middleware/cors";
 import express from "express";
 import registerModule from "./config/register-module";
 
 const app = express();
 
 app.use(express.json());
+app.use(cors)
 
 registerModule(app);
 

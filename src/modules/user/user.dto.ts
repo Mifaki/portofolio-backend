@@ -1,4 +1,5 @@
 import Joi, { ObjectSchema } from "joi";
+import { PaginationQuery, paginationSchema } from "@/utils/pagination";
 
 export interface CreateUserDto {
   email: string;
@@ -25,11 +26,20 @@ export const createUserSchema: ObjectSchema<CreateUserDto> =
     roleId: Joi.string().optional(),
   });
 
+export interface GetUsersQueryDto extends PaginationQuery {
+  q?: string;
+}
+
+export const getUsersQuerySchema = paginationSchema.keys({
+  q: Joi.string().trim().optional(),
+});
+
 export interface UpdateUserDto {
   email?: string;
   username?: string;
   password?: string;
   roleId?: string;
+  
 }
 
 export const updateUserSchema: ObjectSchema<UpdateUserDto> =
@@ -56,7 +66,15 @@ const userSchema = Joi.object({
   createdAt: Joi.date(),
 });
 
-export const getAllUsersResponseSchema = Joi.array().items(userSchema);
+export const getAllUsersResponseSchema = Joi.object({
+  items: Joi.array().items(userSchema),
+  meta: Joi.object({
+    total: Joi.number().integer(),
+    page: Joi.number().integer(),
+    limit: Joi.number().integer(),
+    totalPages: Joi.number().integer(),
+  }),
+});
 export const getUserByIdResponseSchema = userSchema;
 export const createUserResponseSchema = userSchema;
 export const updateUserResponseSchema = userSchema;
