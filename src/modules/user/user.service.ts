@@ -26,6 +26,7 @@ export async function getAllUsers(query: GetUsersQueryDto) {
           ],
         }
       : {}),
+    ...(query.roleId ? { roleId: query.roleId } : {}),
   };
 
   const [items, total] = await Promise.all([

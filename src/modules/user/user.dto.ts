@@ -28,10 +28,12 @@ export const createUserSchema: ObjectSchema<CreateUserDto> =
 
 export interface GetUsersQueryDto extends PaginationQuery {
   q?: string;
+  roleId?: string;
 }
 
 export const getUsersQuerySchema = paginationSchema.keys({
   q: Joi.string().trim().optional(),
+  roleId: Joi.string().uuid().optional(),
 });
 
 export interface UpdateUserDto {
