@@ -1325,6 +1325,9 @@
                                         "regular"
                                       ]
                                     },
+                                    "position": {
+                                      "type": "integer"
+                                    },
                                     "content": {
                                       "type": "string"
                                     }
@@ -1463,6 +1466,9 @@
                                   "regular"
                                 ]
                               },
+                              "position": {
+                                "type": "integer"
+                              },
                               "content": {
                                 "type": "string"
                               }
@@ -1555,8 +1561,22 @@
                   "texts": {
                     "type": "array",
                     "items": {
-                      "type": "string",
-                      "minLength": 1
+                      "type": "object",
+                      "properties": {
+                        "content": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "position": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      },
+                      "required": [
+                        "content",
+                        "position"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "images": {
@@ -1671,6 +1691,9 @@
                                   "headline",
                                   "regular"
                                 ]
+                              },
+                              "position": {
+                                "type": "integer"
                               },
                               "content": {
                                 "type": "string"
@@ -1798,6 +1821,9 @@
                                   "regular"
                                 ]
                               },
+                              "position": {
+                                "type": "integer"
+                              },
                               "content": {
                                 "type": "string"
                               }
@@ -1900,8 +1926,22 @@
                   "texts": {
                     "type": "array",
                     "items": {
-                      "type": "string",
-                      "minLength": 1
+                      "type": "object",
+                      "properties": {
+                        "content": {
+                          "type": "string",
+                          "minLength": 1
+                        },
+                        "position": {
+                          "type": "integer",
+                          "minimum": 0
+                        }
+                      },
+                      "required": [
+                        "content",
+                        "position"
+                      ],
+                      "additionalProperties": false
                     }
                   },
                   "images": {
@@ -2005,6 +2045,168 @@
             }
           }
         ]
+      }
+    },
+    "/projects/position": {
+      "patch": {
+        "tags": [
+          "Projects"
+        ],
+        "summary": "Update project position",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "example": "success"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "format": "uuid"
+                        },
+                        "position": {
+                          "type": "integer"
+                        },
+                        "title": {
+                          "type": "string"
+                        },
+                        "category": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "year": {
+                          "type": "string"
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "modifiedAt": {
+                          "type": "string",
+                          "format": "date-time"
+                        },
+                        "texts": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "headline",
+                                  "regular"
+                                ]
+                              },
+                              "position": {
+                                "type": "integer"
+                              },
+                              "content": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": false
+                          }
+                        },
+                        "images": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "type": {
+                                "type": "string",
+                                "enum": [
+                                  "thumbnail",
+                                  "normal"
+                                ]
+                              },
+                              "orientation": {
+                                "type": "string",
+                                "enum": [
+                                  "landscape",
+                                  "portrait"
+                                ]
+                              },
+                              "imageUrl": {
+                                "type": "string"
+                              }
+                            },
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "additionalProperties": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "projectId": {
+                    "type": "string",
+                    "format": "uuid"
+                  },
+                  "originalPosition": {
+                    "type": "integer",
+                    "minimum": 0
+                  },
+                  "newPosition": {
+                    "type": "integer",
+                    "minimum": 0
+                  }
+                },
+                "required": [
+                  "projectId",
+                  "originalPosition",
+                  "newPosition"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        }
       }
     }
   }

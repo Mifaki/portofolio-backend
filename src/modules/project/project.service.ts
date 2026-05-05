@@ -1,4 +1,4 @@
-import { CreateProjectDto, GetProjectsQueryDto, UpdateProjectDto } from "./project.dto";
+import { CreateProjectDto, GetProjectsQueryDto, UpdateProjectDto, UpdateProjectPositionDto } from "./project.dto";
 
 import { httpError } from "@/utils/error";
 import { paginate, toPrismaPage } from "@/utils/pagination";
@@ -14,8 +14,8 @@ const projectSelect = {
   createdAt: true,
   modifiedAt: true,
   texts: {
-    select: { id: true, type: true, content: true },
-    orderBy: { createdAt: "asc" as const },
+    select: { id: true, type: true, position: true, content: true },
+    orderBy: { position: "asc" as const },
   },
   images: {
     select: { id: true, type: true, orientation: true, imageUrl: true },
@@ -59,7 +59,7 @@ export async function createProject(dto: CreateProjectDto) {
       type: dto.type,
       year: dto.year,
       texts: dto.texts?.length
-        ? { create: dto.texts.map((content) => ({ type: "regular" as const, content })) }
+        ? { create: dto.texts.map(({ content, position }) => ({ type: "regular" as const, content, position })) }
         : undefined,
       images: dto.images?.length
         ? { create: dto.images.map(({ imageUrl, type, orientation }) => ({ imageUrl, type, orientation })) }
@@ -89,12 +89,56 @@ export async function updateProject(id: string, dto: UpdateProjectDto) {
         ...(dto.type !== undefined && { type: dto.type }),
         ...(dto.year !== undefined && { year: dto.year }),
         ...(dto.texts !== undefined && {
-          texts: { create: dto.texts.map((content) => ({ type: "regular" as const, content })) },
+          texts: { create: dto.texts.map(({ content, position }) => ({ type: "regular" as const, content, position })) },
         }),
         ...(dto.images !== undefined && {
           images: { create: dto.images.map(({ imageUrl, type, orientation }) => ({ imageUrl, type, orientation })) },
         }),
       },
+      select: projectSelect,
+    });
+  });
+}
+
+export async function updateProjectPosition(dto: UpdateProjectPositionDto) {
+  const project = await prisma.project.findFirst({
+    where: { id: dto.projectId, deletedAt: null },
+    select: { id: true, position: true },
+  });
+
+  if (!project) throw httpError(404, "Project not found");
+  if (project.position !== dto.originalPosition) {
+    throw httpError(409, "Original position does not match the project's current position");
+  }
+  
+  if (dto.originalPosition === dto.newPosition) {
+    return prisma.project.findFirst({ where: { id: dto.projectId }, select: projectSelect });
+  }
+
+  return prisma.$transaction(async (tx) => {
+    if (dto.newPosition > dto.originalPosition) {
+      await tx.project.updateMany({
+        where: {
+          deletedAt: null,
+          position: { gt: dto.originalPosition, lte: dto.newPosition },
+          NOT: { id: dto.projectId },
+        },
+        data: { position: { decrement: 1 } },
+      });
+    } else {
+      await tx.project.updateMany({
+        where: {
+          deletedAt: null,
+          position: { gte: dto.newPosition, lt: dto.originalPosition },
+          NOT: { id: dto.projectId },
+        },
+        data: { position: { increment: 1 } },
+      });
+    }
+
+    return tx.project.update({
+      where: { id: dto.projectId },
+      data: { position: dto.newPosition },
       select: projectSelect,
     });
   });

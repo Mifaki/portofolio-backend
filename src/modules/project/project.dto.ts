@@ -9,6 +9,11 @@ export const getProjectsQuerySchema = paginationSchema.keys({
   q: Joi.string().trim().optional(),
 });
 
+export interface ProjectTextInput {
+  content: string;
+  position: number;
+}
+
 export interface ProjectImageDto {
   imageUrl: string;
   type: "thumbnail" | "normal";
@@ -21,7 +26,7 @@ export interface CreateProjectDto {
   category: string;
   type: string;
   year: string;
-  texts?: string[];
+  texts?: ProjectTextInput[];
   images?: ProjectImageDto[];
 }
 
@@ -31,9 +36,14 @@ export interface UpdateProjectDto {
   category?: string;
   type?: string;
   year?: string;
-  texts?: string[];
+  texts?: ProjectTextInput[];
   images?: ProjectImageDto[];
 }
+
+const textInputSchema = Joi.object({
+  content: Joi.string().min(1).required(),
+  position: Joi.number().integer().min(0).required(),
+});
 
 const imageSchema = Joi.object({
   imageUrl: Joi.string().uri().required(),
@@ -41,14 +51,20 @@ const imageSchema = Joi.object({
   orientation: Joi.string().valid("landscape", "portrait").required(),
 });
 
+const imagesSchema = Joi.array().items(imageSchema).custom((images, helpers) => {
+  const thumbnails = images.filter((img: ProjectImageDto) => img.type === "thumbnail");
+  if (thumbnails.length > 1) return helpers.error("any.invalid");
+  return images;
+}).messages({ "any.invalid": "A project can only have one thumbnail image" });
+
 export const createProjectSchema = Joi.object<CreateProjectDto>({
   position: Joi.number().integer().min(0).required(),
   title: Joi.string().max(255).required(),
   category: Joi.string().max(100).required(),
   type: Joi.string().max(100).required(),
   year: Joi.string().length(4).pattern(/^\d{4}$/).required(),
-  texts: Joi.array().items(Joi.string().min(1)).optional(),
-  images: Joi.array().items(imageSchema).optional(),
+  texts: Joi.array().items(textInputSchema).optional(),
+  images: imagesSchema.optional(),
 });
 
 export const updateProjectSchema = Joi.object<UpdateProjectDto>({
@@ -57,13 +73,14 @@ export const updateProjectSchema = Joi.object<UpdateProjectDto>({
   category: Joi.string().max(100).optional(),
   type: Joi.string().max(100).optional(),
   year: Joi.string().length(4).pattern(/^\d{4}$/).optional(),
-  texts: Joi.array().items(Joi.string().min(1)).optional(),
-  images: Joi.array().items(imageSchema).optional(),
+  texts: Joi.array().items(textInputSchema).optional(),
+  images: imagesSchema.optional(),
 }).min(1);
 
 const projectTextSchema = Joi.object({
   id: Joi.string().uuid(),
   type: Joi.string().valid("headline", "regular"),
+  position: Joi.number().integer(),
   content: Joi.string(),
 });
 
@@ -103,3 +120,17 @@ export const deleteProjectResponseSchema = Joi.object({
   id: Joi.string().uuid(),
   title: Joi.string(),
 });
+
+export interface UpdateProjectPositionDto {
+  projectId: string;
+  originalPosition: number;
+  newPosition: number;
+}
+
+export const updateProjectPositionSchema = Joi.object<UpdateProjectPositionDto>({
+  projectId: Joi.string().uuid().required(),
+  originalPosition: Joi.number().integer().min(0).required(),
+  newPosition: Joi.number().integer().min(0).required(),
+});
+
+export const updateProjectPositionResponseSchema = projectSchema;

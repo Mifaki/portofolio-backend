@@ -2,7 +2,7 @@ import * as ProjectService from "./project.service";
 import * as R from "@/utils/response";
 
 import { Request, Response } from "express";
-import { createProjectSchema, getProjectsQuerySchema, updateProjectSchema } from "./project.dto";
+import { createProjectSchema, getProjectsQuerySchema, updateProjectPositionSchema, updateProjectSchema } from "./project.dto";
 
 export async function getAllProjectsHandler(req: Request, res: Response) {
   const { error, value } = getProjectsQuerySchema.validate(req.query);
@@ -37,6 +37,16 @@ export async function updateProjectHandler(req: Request, res: Response) {
   }
   const project = await ProjectService.updateProject(req.params.id as string, value);
   R.ok(res, "Project updated successfully", project);
+}
+
+export async function updateProjectPositionHandler(req: Request, res: Response) {
+  const { error, value } = updateProjectPositionSchema.validate(req.body);
+  if (error) {
+    R.badRequest(res, error.details[0].message);
+    return;
+  }
+  const project = await ProjectService.updateProjectPosition(value);
+  R.ok(res, "Project position updated successfully", project);
 }
 
 export async function deleteProjectHandler(req: Request, res: Response) {

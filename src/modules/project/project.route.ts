@@ -6,6 +6,7 @@ import {
   getProjectByIdHandler,
   createProjectHandler,
   updateProjectHandler,
+  updateProjectPositionHandler,
   deleteProjectHandler,
 } from "./project.controller";
 
@@ -17,6 +18,7 @@ router.get("/:id", getProjectByIdHandler);
 router.use(authenticate);
 
 router.post("/", authorize("ADMIN"), createProjectHandler);
+router.patch("/position", authorize("ADMIN"), updateProjectPositionHandler);
 router.put("/:id", authorize("ADMIN"), updateProjectHandler);
 router.delete("/:id", authorize("ADMIN"), deleteProjectHandler);
 
