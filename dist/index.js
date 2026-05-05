@@ -284,120 +284,16 @@ var import_crypto = require("crypto");
 // src/utils/mailer.ts
 var import_nodemailer = __toESM(require("nodemailer"));
 var import_ejs = __toESM(require("ejs"));
-
-// src/templates/otp-email.ejs
-var otp_email_default = `<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Your OTP Code</title>
-</head>
-<body style="margin:0;padding:0;background-color:#f1f5f9;font-family:'Segoe UI',Arial,sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="background-color:#f1f5f9;padding:48px 16px;">
-    <tr>
-      <td align="center">
-        <table width="560" cellpadding="0" cellspacing="0" role="presentation" style="max-width:560px;width:100%;">
-
-          <tr>
-            <td align="center" style="padding-bottom:24px;">
-              <span style="font-size:22px;font-weight:700;color:#0f172a;letter-spacing:-0.5px;">
-                &lt;Portfolio /&gt;
-              </span>
-            </td>
-          </tr>
-
-          <tr>
-            <td style="background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 32px rgba(15,23,42,0.08);">
-
-              <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
-                <tr>
-                  <td style="background:linear-gradient(135deg,#0f172a 0%,#1e293b 100%);padding:36px 40px;">
-                    <h1 style="margin:0;color:#f8fafc;font-size:22px;font-weight:700;letter-spacing:-0.3px;">
-                      Sign-in verification
-                    </h1>
-                    <p style="margin:8px 0 0;color:#94a3b8;font-size:14px;">
-                      Use the code below to complete your sign-in.
-                    </p>
-                  </td>
-                </tr>
-              </table>
-
-              <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
-                <tr>
-                  <td style="padding:40px;">
-
-                    <p style="margin:0 0 28px;color:#475569;font-size:15px;line-height:1.6;">
-                      Hi there, we received a sign-in request for your account.
-                      Enter the code below to continue. It will expire in
-                      <strong style="color:#0f172a;"><%= expiresInMinutes %> minutes</strong>.
-                    </p>
-
-                    <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
-                      <tr>
-                        <td align="center" style="background:#f8fafc;border:2px dashed #e2e8f0;border-radius:12px;padding:28px 20px;">
-                          <p style="margin:0 0 4px;color:#94a3b8;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;">
-                            Your OTP Code
-                          </p>
-                          <p style="margin:0;font-size:48px;font-weight:700;letter-spacing:16px;color:#0f172a;font-family:'Courier New',Courier,monospace;">
-                            <%= code %>
-                          </p>
-                        </td>
-                      </tr>
-                    </table>
-
-                    <table width="100%" cellpadding="0" cellspacing="0" role="presentation" style="margin:32px 0;">
-                      <tr>
-                        <td style="border-top:1px solid #f1f5f9;"></td>
-                      </tr>
-                    </table>
-
-                    <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
-                      <tr>
-                        <td style="background:#fef9ec;border-left:3px solid #f59e0b;border-radius:0 8px 8px 0;padding:14px 16px;">
-                          <p style="margin:0;color:#92400e;font-size:13px;line-height:1.5;">
-                            <strong>Security notice:</strong> We will never ask for this code via phone or chat.
-                            If you didn't request this, please ignore this email your account is safe.
-                          </p>
-                        </td>
-                      </tr>
-                    </table>
-
-                  </td>
-                </tr>
-              </table>
-
-              <table width="100%" cellpadding="0" cellspacing="0" role="presentation">
-                <tr>
-                  <td style="background:#f8fafc;border-top:1px solid #e2e8f0;padding:20px 40px;">
-                    <p style="margin:0;color:#94a3b8;font-size:12px;text-align:center;line-height:1.5;">
-                      This is an automated email please do not reply.<br/>
-                      &copy; <%= new Date().getFullYear() %> Faiz's Portfolio. All rights reserved.
-                    </p>
-                  </td>
-                </tr>
-              </table>
-
-            </td>
-          </tr>
-
-        </table>
-      </td>
-    </tr>
-  </table>
-</body>
-</html>
-`;
-
-// src/utils/mailer.ts
+var import_path = __toESM(require("path"));
 var transport = import_nodemailer.default.createTransport({
   host: SMTP_HOST,
   port: SMTP_PORT,
   secure: SMTP_PORT === 465,
   auth: { user: SMTP_USER, pass: SMTP_PASS }
 });
+var OTP_TEMPLATE = import_path.default.join(process.cwd(), "src/templates/otp-email.ejs");
 async function sendOtpEmail(email, code, expiresInMinutes) {
-  const html = import_ejs.default.render(otp_email_default, { code, expiresInMinutes });
+  const html = await import_ejs.default.renderFile(OTP_TEMPLATE, { code, expiresInMinutes });
   await transport.sendMail({
     from: `"Faiz's Portfolio" <${SMTP_FROM}>`,
     to: email,
@@ -706,7 +602,7 @@ router2.get(
 var health_route_default = router2;
 
 // src/config/register-module.ts
-var import_path = __toESM(require("path"));
+var import_path2 = __toESM(require("path"));
 
 // src/modules/project/project.route.ts
 var import_express3 = require("express");
@@ -1250,7 +1146,7 @@ router5.delete("/:id", authorize("ADMIN"), deleteUserHandler);
 var user_route_default = wrapRouter(router5);
 
 // src/config/register-module.ts
-var swaggerOutputPath = import_path.default.join(process.cwd(), "src/docs/swagger-output.json");
+var swaggerOutputPath = import_path2.default.join(process.cwd(), "src/docs/swagger-output.json");
 var register_module_default = (app2) => {
   if (import_fs.default.existsSync(swaggerOutputPath)) {
     const spec = JSON.parse(import_fs.default.readFileSync(swaggerOutputPath, "utf-8"));
