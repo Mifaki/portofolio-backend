@@ -59,7 +59,7 @@ var NODE_ENV = (import_process.env.NODE_ENV ?? "development").toLowerCase();
 var PORT = parseInt(getEnv("PORT", "3000"), 10);
 var API_URL = getEnv("API_URL");
 var DATABASE_URL = getEnv("DATABASE_URL");
-var SECRET = getEnv("SECRET");
+var SECRET = getEnv("SECRET", "secret");
 var JWT_EXPIRES_IN = getEnv("JWT_EXPIRES_IN", "15m");
 var REFRESH_TOKEN_EXPIRES_IN = getEnv(
   "REFRESH_TOKEN_EXPIRES_IN",
@@ -70,9 +70,9 @@ var ADMIN_EMAIL = getEnv("ADMIN_EMAIL", "admin@admin.com");
 var ADMIN_PASSWORD = getEnv("ADMIN_PASSWORD", "admin123");
 var SMTP_HOST = getEnv("SMTP_HOST", "smtp.gmail.com");
 var SMTP_PORT = parseInt(getEnv("SMTP_PORT", "587"), 10);
-var SMTP_USER = getEnv("SMTP_USER");
-var SMTP_PASS = getEnv("SMTP_PASS");
-var SMTP_FROM = getEnv("SMTP_FROM");
+var SMTP_USER = getEnv("SMTP_USER", "");
+var SMTP_PASS = getEnv("SMTP_PASS", "");
+var SMTP_FROM = getEnv("SMTP_FROM", "");
 var OTP_EXPIRES_IN = getEnv("OTP_EXPIRES_IN", "5m");
 var ALLOWED_ORIGINS = getEnv("ALLOWED_ORIGINS").split(",");
 var ALLOWED_HEADERS = getEnv("ALLOWED_HEADERS", "Content-Type,Authorization,Accept");
@@ -291,7 +291,7 @@ var transport = import_nodemailer.default.createTransport({
   secure: SMTP_PORT === 465,
   auth: { user: SMTP_USER, pass: SMTP_PASS }
 });
-var OTP_TEMPLATE = import_path.default.join(process.cwd(), "src/templates/otp-email.ejs");
+var OTP_TEMPLATE = import_path.default.join(__dirname, "templates/otp-email.ejs");
 async function sendOtpEmail(email, code, expiresInMinutes) {
   const html = await import_ejs.default.renderFile(OTP_TEMPLATE, { code, expiresInMinutes });
   await transport.sendMail({

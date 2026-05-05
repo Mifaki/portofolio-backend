@@ -10,7 +10,7 @@ const transport = nodemailer.createTransport({
   auth: { user: SMTP_USER, pass: SMTP_PASS },
 });
 
-const OTP_TEMPLATE = path.join(process.cwd(), "src/templates/otp-email.ejs");
+const OTP_TEMPLATE = path.join(__dirname, "templates/otp-email.ejs");
 
 export async function sendOtpEmail(
   email: string,
