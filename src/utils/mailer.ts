@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 import ejs from "ejs";
-import path from "path";
+import otpEmailTemplate from "../templates/otp-email.ejs";
 import { SMTP_FROM, SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER } from "@/config/variable";
 
 const transport = nodemailer.createTransport({
@@ -10,14 +10,12 @@ const transport = nodemailer.createTransport({
   auth: { user: SMTP_USER, pass: SMTP_PASS },
 });
 
-const OTP_TEMPLATE = path.join(__dirname, "templates/otp-email.ejs");
-
 export async function sendOtpEmail(
   email: string,
   code: string,
   expiresInMinutes: number,
 ): Promise<void> {
-  const html = await ejs.renderFile(OTP_TEMPLATE, { code, expiresInMinutes });
+  const html = ejs.render(otpEmailTemplate, { code, expiresInMinutes });
 
   await transport.sendMail({
     from: `"Faiz's Portfolio" <${SMTP_FROM}>`,
