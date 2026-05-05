@@ -10,11 +10,6 @@ import { sendOtpEmail } from "@/utils/mailer";
 const OTP_EXPIRES_SECONDS = parseDurationToSeconds(OTP_EXPIRES_IN);
 const OTP_EXPIRES_MINUTES = Math.round(OTP_EXPIRES_SECONDS / 60);
 
-function maskEmail(email: string): string {
-  const [local, domain] = email.split("@");
-  return `${local.slice(0, 2)}***@${domain}`;
-}
-
 async function issueOtp(email: string): Promise<void> {
   const code = randomInt(100000, 999999).toString();
 
@@ -60,7 +55,7 @@ export async function authenticateUser(
 
   await issueOtp(user.email);
 
-  return { email: maskEmail(user.email) };
+  return { email:user.email };
 }
 
 export async function getUser(identifier: string) {
