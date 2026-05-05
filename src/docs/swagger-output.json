@@ -1275,93 +1275,117 @@
                       "type": "string"
                     },
                     "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "id": {
-                            "type": "string",
-                            "format": "uuid"
-                          },
-                          "position": {
-                            "type": "integer"
-                          },
-                          "title": {
-                            "type": "string"
-                          },
-                          "category": {
-                            "type": "string"
-                          },
-                          "type": {
-                            "type": "string"
-                          },
-                          "year": {
-                            "type": "string"
-                          },
-                          "createdAt": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "modifiedAt": {
-                            "type": "string",
-                            "format": "date-time"
-                          },
-                          "texts": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string",
-                                  "format": "uuid"
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "enum": [
-                                    "headline",
-                                    "regular"
-                                  ]
-                                },
-                                "content": {
-                                  "type": "string"
+                      "type": "object",
+                      "properties": {
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string",
+                                "format": "uuid"
+                              },
+                              "position": {
+                                "type": "integer"
+                              },
+                              "title": {
+                                "type": "string"
+                              },
+                              "category": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string"
+                              },
+                              "year": {
+                                "type": "string"
+                              },
+                              "createdAt": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "modifiedAt": {
+                                "type": "string",
+                                "format": "date-time"
+                              },
+                              "texts": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "enum": [
+                                        "headline",
+                                        "regular"
+                                      ]
+                                    },
+                                    "content": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false
                                 }
                               },
-                              "additionalProperties": false
-                            }
-                          },
-                          "images": {
-                            "type": "array",
-                            "items": {
-                              "type": "object",
-                              "properties": {
-                                "id": {
-                                  "type": "string",
-                                  "format": "uuid"
-                                },
-                                "type": {
-                                  "type": "string",
-                                  "enum": [
-                                    "thumbnail",
-                                    "normal"
-                                  ]
-                                },
-                                "orientation": {
-                                  "type": "string",
-                                  "enum": [
-                                    "landscape",
-                                    "portrait"
-                                  ]
-                                },
-                                "imageUrl": {
-                                  "type": "string"
+                              "images": {
+                                "type": "array",
+                                "items": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type": "string",
+                                      "format": "uuid"
+                                    },
+                                    "type": {
+                                      "type": "string",
+                                      "enum": [
+                                        "thumbnail",
+                                        "normal"
+                                      ]
+                                    },
+                                    "orientation": {
+                                      "type": "string",
+                                      "enum": [
+                                        "landscape",
+                                        "portrait"
+                                      ]
+                                    },
+                                    "imageUrl": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "additionalProperties": false
                                 }
-                              },
-                              "additionalProperties": false
-                            }
+                              }
+                            },
+                            "additionalProperties": false
                           }
                         },
-                        "additionalProperties": false
-                      }
+                        "meta": {
+                          "type": "object",
+                          "properties": {
+                            "total": {
+                              "type": "integer"
+                            },
+                            "page": {
+                              "type": "integer"
+                            },
+                            "limit": {
+                              "type": "integer"
+                            },
+                            "totalPages": {
+                              "type": "integer"
+                            }
+                          },
+                          "additionalProperties": false
+                        }
+                      },
+                      "additionalProperties": false
                     }
                   }
                 }

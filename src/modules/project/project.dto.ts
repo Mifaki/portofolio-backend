@@ -1,4 +1,13 @@
 import Joi from "joi";
+import { PaginationQuery, paginationSchema } from "@/utils/pagination";
+
+export interface GetProjectsQueryDto extends PaginationQuery {
+  q?: string;
+}
+
+export const getProjectsQuerySchema = paginationSchema.keys({
+  q: Joi.string().trim().optional(),
+});
 
 export interface ProjectImageDto {
   imageUrl: string;
@@ -78,7 +87,15 @@ const projectSchema = Joi.object({
   images: Joi.array().items(projectImageSchema),
 });
 
-export const getAllProjectsResponseSchema = Joi.array().items(projectSchema);
+export const getAllProjectsResponseSchema = Joi.object({
+  items: Joi.array().items(projectSchema),
+  meta: Joi.object({
+    total: Joi.number().integer(),
+    page: Joi.number().integer(),
+    limit: Joi.number().integer(),
+    totalPages: Joi.number().integer(),
+  }),
+});
 export const getProjectByIdResponseSchema = projectSchema;
 export const createProjectResponseSchema = projectSchema;
 export const updateProjectResponseSchema = projectSchema;

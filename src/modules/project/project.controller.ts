@@ -2,11 +2,16 @@ import * as ProjectService from "./project.service";
 import * as R from "@/utils/response";
 
 import { Request, Response } from "express";
-import { createProjectSchema, updateProjectSchema } from "./project.dto";
+import { createProjectSchema, getProjectsQuerySchema, updateProjectSchema } from "./project.dto";
 
-export async function getAllProjectsHandler(_req: Request, res: Response) {
-  const projects = await ProjectService.getAllProjects();
-  R.ok(res, "List of all projects", projects);
+export async function getAllProjectsHandler(req: Request, res: Response) {
+  const { error, value } = getProjectsQuerySchema.validate(req.query);
+  if (error) {
+    R.badRequest(res, error.details[0].message);
+    return;
+  }
+  const result = await ProjectService.getAllProjects(value);
+  R.ok(res, "List of all projects", result);
 }
 
 export async function getProjectByIdHandler(req: Request, res: Response) {

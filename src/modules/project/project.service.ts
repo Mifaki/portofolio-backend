@@ -1,6 +1,7 @@
-import { CreateProjectDto, UpdateProjectDto } from "./project.dto";
+import { CreateProjectDto, GetProjectsQueryDto, UpdateProjectDto } from "./project.dto";
 
 import { httpError } from "@/utils/error";
+import { paginate, toPrismaPage } from "@/utils/pagination";
 import { prisma } from "@/config/prisma";
 
 const projectSelect = {
@@ -22,13 +23,19 @@ const projectSelect = {
   },
 };
 
-export async function getAllProjects() {
-  return prisma.project.findMany({
-    where: { deletedAt: null },
-    
-    select: projectSelect,
-    orderBy: { position: "asc" },
-  });
+export async function getAllProjects(query: GetProjectsQueryDto) {
+  const { skip, take } = toPrismaPage(query);
+  const where = {
+    deletedAt: null,
+    ...(query.q ? { title: { contains: query.q, mode: "insensitive" as const } } : {}),
+  };
+
+  const [items, total] = await Promise.all([
+    prisma.project.findMany({ where, select: projectSelect, skip, take, orderBy: { position: "asc" } }),
+    prisma.project.count({ where }),
+  ]);
+
+  return paginate(items, total, query);
 }
 
 export async function getProjectById(id: string) {
