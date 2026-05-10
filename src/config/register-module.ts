@@ -1,4 +1,5 @@
 import { Application } from "express";
+import aboutRoute from "@/modules/about/about.route";
 import auth from "@/modules/auth/auth.route";
 import fs from "fs";
 import healthRoute from "@/modules/health/health.route";
@@ -28,4 +29,5 @@ export default (app: Application) => {
   app.use("/auth", auth);
   app.use("/roles", roleRoute);
   app.use("/projects", projectRoute);
+  app.use("/about", aboutRoute);
 };

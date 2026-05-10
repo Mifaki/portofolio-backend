@@ -1,0 +1,91 @@
+model About {
+  id              String  @id @default(uuid()) @db.Char(36)
+  name            String  @db.VarChar(255)
+  instagram       String? @db.VarChar(500)
+  github          String? @db.VarChar(500)
+  linkedin        String? @db.VarChar(500)
+
+  descriptions    AboutDescription[]
+  techStacks      AboutTechStack[]
+  images          AboutImage[]
+  workExperiences WorkExperience[]
+
+  createdAt  DateTime  @default(now())
+  modifiedAt DateTime  @updatedAt
+  deletedAt  DateTime?
+
+  @@index([deletedAt])
+  @@map("abouts")
+  @@schema("portfolio")
+}
+
+model AboutDescription {
+  id       String @id @default(uuid()) @db.Char(36)
+  aboutId  String @db.Char(36)
+  about    About  @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+  content  String @db.Text
+  position Int    @default(0)
+
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
+  @@index([aboutId])
+  @@index([aboutId, position])
+  @@map("aboutDescriptions")
+  @@schema("portfolio")
+}
+
+model AboutTechStack {
+  id         String @id @default(uuid()) @db.Char(36)
+  aboutId    String @db.Char(36)
+  about      About  @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+  name       String @db.VarChar(100)
+  iconUrl    String @db.Text
+  percentage Int
+  position   Int    @default(0)
+
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
+  @@index([aboutId])
+  @@map("aboutTechStacks")
+  @@schema("portfolio")
+}
+
+model AboutImage {
+  id       String @id @default(uuid()) @db.Char(36)
+  aboutId  String @db.Char(36)
+  about    About  @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+  imageUrl String @db.Text
+  position Int    @default(0)
+
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
+  @@index([aboutId])
+  @@map("aboutImages")
+  @@schema("portfolio")
+}
+
+model WorkExperience {
+  id          String  @id @default(uuid()) @db.Char(36)
+  aboutId     String  @db.Char(36)
+  about       About   @relation(fields: [aboutId], references: [id], onDelete: Cascade)
+  company     String  @db.VarChar(255)
+  role        String  @db.VarChar(255)
+  description String? @db.Text
+  location    String? @db.VarChar(255)
+  startMonth  Int
+  startYear   Int
+  endMonth    Int?
+  endYear     Int?
+  position    Int     @default(0)
+
+  createdAt  DateTime @default(now())
+  modifiedAt DateTime @updatedAt
+
+  @@index([aboutId])
+  @@index([aboutId, position])
+  @@map("workExperiences")
+  @@schema("portfolio")
+}
