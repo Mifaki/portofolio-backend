@@ -1734,6 +1734,24 @@
                             },
                             "additionalProperties": false
                           }
+                        },
+                        "nextProject": {
+                          "type": "object",
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "title": {
+                              "type": "string"
+                            },
+                            "thumbnailUrl": {
+                              "type": "string",
+                              "nullable": true
+                            }
+                          },
+                          "additionalProperties": false,
+                          "nullable": true
                         }
                       },
                       "additionalProperties": false

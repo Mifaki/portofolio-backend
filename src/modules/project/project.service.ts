@@ -38,13 +38,40 @@ export async function getAllProjects(query: GetProjectsQueryDto) {
   return paginate(items, total, query);
 }
 
+const nextProjectSelect = {
+  id: true,
+  title: true,
+  position: true,
+  images: {
+    where: { type: "thumbnail" as const },
+    select: { imageUrl: true },
+    take: 1,
+  },
+};
+
 export async function getProjectById(id: string) {
   const project = await prisma.project.findFirst({
     where: { id, deletedAt: null },
     select: projectSelect,
   });
   if (!project) throw httpError(404, "Project not found");
-  return project;
+
+  const nextProject = await prisma.project.findFirst({
+    where: { deletedAt: null, position: { gt: project.position } },
+    orderBy: { position: "asc" },
+    select: nextProjectSelect,
+  }) ?? await prisma.project.findFirst({
+    where: { deletedAt: null },
+    orderBy: { position: "asc" },
+    select: nextProjectSelect,
+  });
+
+  return {
+    ...project,
+    nextProject: nextProject
+      ? { id: nextProject.id, title: nextProject.title, thumbnailUrl: nextProject.images[0]?.imageUrl ?? null }
+      : null,
+  };
 }
 
 export async function createProject(dto: CreateProjectDto) {

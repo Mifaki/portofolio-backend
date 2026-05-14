@@ -113,7 +113,13 @@ export const getAllProjectsResponseSchema = Joi.object({
     totalPages: Joi.number().integer(),
   }),
 });
-export const getProjectByIdResponseSchema = projectSchema;
+export const getProjectByIdResponseSchema = projectSchema.keys({
+  nextProject: Joi.object({
+    id: Joi.string().uuid(),
+    title: Joi.string(),
+    thumbnailUrl: Joi.string().uri().allow(null),
+  }).allow(null),
+});
 export const createProjectResponseSchema = projectSchema;
 export const updateProjectResponseSchema = projectSchema;
 export const deleteProjectResponseSchema = Joi.object({
