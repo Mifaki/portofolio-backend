@@ -6,8 +6,8 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "prisma generate && tsup",
-    "postinstall": "prisma generate && tsup",
-    "start": "node dist/index.js",
+    "postinstall": "prisma generate",
+    "start": "node api/index.js",
     "seed": "tsx -r tsconfig-paths/register src/seed.ts",
     "docs": "tsx -r tsconfig-paths/register src/docs/generate.ts"
   },
