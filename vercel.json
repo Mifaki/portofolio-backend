@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "installCommand": "pnpm install --frozen-lockfile && pnpm run build",
+  "installCommand": "pnpm install --frozen-lockfile",
   "builds": [
     {
       "src": "dist/index.js",
