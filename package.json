@@ -7,7 +7,7 @@
     "dev": "tsx watch src/index.ts",
     "build": "prisma generate && tsup",
     "postinstall": "prisma generate",
-    "start": "node api/index.js",
+    "start": "node dist/index.js",
     "seed": "tsx -r tsconfig-paths/register src/seed.ts",
     "docs": "tsx -r tsconfig-paths/register src/docs/generate.ts"
   },
@@ -25,7 +25,6 @@
     "@types/pg": "^8.20.0",
     "@types/swagger-ui-express": "^4.1.8",
     "prisma": "^7.8.0",
-    "tsconfig-paths": "^4.2.0",
     "tsup": "^8.5.1",
     "tsx": "^4.21.0",
     "typescript": "^6.0.3"
@@ -33,6 +32,7 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.8.0",
     "@prisma/client": "^7.8.0",
+    "tsconfig-paths": "^4.2.0",
     "bcrypt": "^6.0.0",
     "dotenv": "^17.4.2",
     "ejs": "^5.0.2",

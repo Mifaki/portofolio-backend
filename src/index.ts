@@ -1,3 +1,4 @@
+import "tsconfig-paths/register";
 import "dotenv/config";
 
 import { cors } from "./middleware/cors";
