@@ -1,5 +1,5 @@
 import * as ProjectService from "./project.service";
-import * as R from "@/utils/response";
+import * as R from '../../utils/response';
 
 import { Request, Response } from "express";
 import { createProjectSchema, getProjectsQuerySchema, updateProjectPositionSchema, updateProjectSchema } from "./project.dto";

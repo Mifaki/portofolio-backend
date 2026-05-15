@@ -1,6 +1,6 @@
 import dotenv from "dotenv";
 import { env } from "process";
-import { httpError } from "@/utils/error";
+import { httpError } from '../utils/error';
 
 dotenv.config();
 

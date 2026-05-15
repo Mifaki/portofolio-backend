@@ -1,7 +1,7 @@
-import { ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_USERNAME } from "@/config/variable";
+import { ADMIN_EMAIL, ADMIN_PASSWORD, ADMIN_USERNAME } from './config/variable';
 
-import { hashPassword } from "@/middleware/auth";
-import { prisma } from "@/config/prisma";
+import { hashPassword } from './middleware/auth';
+import { prisma } from './config/prisma';
 
 async function main() {
   const role = await prisma.role.upsert({

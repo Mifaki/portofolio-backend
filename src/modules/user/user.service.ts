@@ -1,9 +1,9 @@
 import { CreateUserDto, GetUsersQueryDto, UpdateUserDto } from "./user.dto";
 
-import { hashPassword } from "@/middleware/auth";
-import { httpError } from "@/utils/error";
-import { paginate, toPrismaPage } from "@/utils/pagination";
-import { prisma } from "@/config/prisma";
+import { hashPassword } from '../../middleware/auth';
+import { httpError } from '../../utils/error';
+import { paginate, toPrismaPage } from '../../utils/pagination';
+import { prisma } from '../../config/prisma';
 
 const userSelect = {
   id: true,

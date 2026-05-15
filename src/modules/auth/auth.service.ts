@@ -1,11 +1,11 @@
 import { OtpSentPayload, SessionPayload, Tokens } from "./auth.dto";
-import { comparePassword, generateSingleToken, generateTokens } from "@/middleware/auth";
-import { OTP_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN } from "@/config/variable";
-import { httpError } from "@/utils/error";
-import { parseDurationToSeconds } from "@/utils/parse";
-import { prisma } from "@/config/prisma";
+import { comparePassword, generateSingleToken, generateTokens } from '../../middleware/auth';
+import { OTP_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN } from '../../config/variable';
+import { httpError } from '../../utils/error';
+import { parseDurationToSeconds } from '../../utils/parse';
+import { prisma } from '../../config/prisma';
 import { randomInt } from "crypto";
-import { sendOtpEmail } from "@/utils/mailer";
+import { sendOtpEmail } from '../../utils/mailer';
 
 const OTP_EXPIRES_SECONDS = parseDurationToSeconds(OTP_EXPIRES_IN);
 const OTP_EXPIRES_MINUTES = Math.round(OTP_EXPIRES_SECONDS / 60);

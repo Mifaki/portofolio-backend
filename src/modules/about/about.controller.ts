@@ -1,5 +1,5 @@
 import * as AboutService from "./about.service";
-import * as R from "@/utils/response";
+import * as R from '../../utils/response';
 
 import { Request, Response } from "express";
 import { createAboutSchema, updateAboutSchema } from "./about.dto";

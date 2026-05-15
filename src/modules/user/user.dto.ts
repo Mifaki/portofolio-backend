@@ -1,5 +1,5 @@
 import Joi, { ObjectSchema } from "joi";
-import { PaginationQuery, paginationSchema } from "@/utils/pagination";
+import { PaginationQuery, paginationSchema } from '../../utils/pagination';
 
 export interface CreateUserDto {
   email: string;

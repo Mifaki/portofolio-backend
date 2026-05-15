@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import ejs from "ejs";
 import path from "path";
-import { SMTP_FROM, SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER } from "@/config/variable";
+import { SMTP_FROM, SMTP_HOST, SMTP_PASS, SMTP_PORT, SMTP_USER } from '../config/variable';
 
 const transport = nodemailer.createTransport({
   host: SMTP_HOST,

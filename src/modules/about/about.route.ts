@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { authenticate, authorize } from "@/middleware/auth";
-import { wrapRouter } from "@/utils/wrap-router";
+import { authenticate, authorize } from '../../middleware/auth';
+import { wrapRouter } from '../../utils/wrap-router';
 import {
   getAboutHandler,
   createAboutHandler,

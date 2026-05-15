@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { PaginationQuery, paginationSchema } from "@/utils/pagination";
+import { PaginationQuery, paginationSchema } from '../../utils/pagination';
 
 export interface GetRolesQueryDto extends PaginationQuery {
   q?: string;

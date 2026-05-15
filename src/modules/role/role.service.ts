@@ -1,8 +1,8 @@
 import { CreateRoleDto, GetRolesQueryDto, UpdateRoleDto } from "./role.dto";
 
-import { httpError } from "@/utils/error";
-import { paginate, toPrismaPage } from "@/utils/pagination";
-import { prisma } from "@/config/prisma";
+import { httpError } from '../../utils/error';
+import { paginate, toPrismaPage } from '../../utils/pagination';
+import { prisma } from '../../config/prisma';
 
 const roleSelect = {
   id: true,

@@ -1,5 +1,5 @@
-import * as AuthService from "@/modules/auth/auth.service";
-import * as R from "@/utils/response";
+import * as AuthService from './auth.service';
+import * as R from '../../utils/response';
 
 import { Request, Response } from "express";
 import {
@@ -7,7 +7,7 @@ import {
   otpRequestSchema,
   otpVerifySchema,
   refreshSchema,
-} from "@/modules/auth/auth.dto";
+} from './auth.dto';
 
 export const loginRequest = async (req: Request, res: Response) => {
   const { error, value } = loginRequestSchema.validate(req.body);

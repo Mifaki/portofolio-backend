@@ -1,7 +1,7 @@
 import { CreateAboutDto, UpdateAboutDto } from "./about.dto";
 
-import { httpError } from "@/utils/error";
-import { prisma } from "@/config/prisma";
+import { httpError } from '../../utils/error';
+import { prisma } from '../../config/prisma';
 
 const aboutSelect = {
   id: true,

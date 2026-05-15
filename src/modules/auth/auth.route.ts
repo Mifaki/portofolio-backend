@@ -1,8 +1,8 @@
-import * as AuthCtrl from "@/modules/auth/auth.controller";
+import * as AuthCtrl from './auth.controller';
 
 import { Router } from "express";
-import { authenticate } from "@/middleware/auth";
-import { wrapRouter } from "@/utils/wrap-router";
+import { authenticate } from '../../middleware/auth';
+import { wrapRouter } from '../../utils/wrap-router';
 
 const router = Router();
 

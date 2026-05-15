@@ -1,4 +1,4 @@
-import * as R from "@/utils/response";
+import * as R from '../../utils/response';
 import * as RoleService from "./role.service";
 
 import { Request, Response } from "express";

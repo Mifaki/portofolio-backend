@@ -1,4 +1,4 @@
-import { authenticate, authorize } from "@/middleware/auth";
+import { authenticate, authorize } from '../../middleware/auth';
 import {
   createUserHandler,
   deleteUserHandler,
@@ -8,7 +8,7 @@ import {
 } from "./user.controller";
 
 import { Router } from "express";
-import { wrapRouter } from "@/utils/wrap-router";
+import { wrapRouter } from '../../utils/wrap-router';
 
 const router = Router();
 

@@ -5,7 +5,7 @@ import {
 } from "../config/variable";
 
 import { RequestHandler } from "express";
-import { badRequest } from "@/utils/response";
+import { badRequest } from '../utils/response';
 
 export const cors: RequestHandler = (req, res, next) => {
   const origin = req.headers.origin || "";

@@ -1,13 +1,13 @@
-import * as R from "@/utils/response";
+import * as R from '../utils/response';
 
-import { JWT_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN, SECRET } from "@/config/variable";
+import { JWT_EXPIRES_IN, REFRESH_TOKEN_EXPIRES_IN, SECRET } from '../config/variable';
 import { Request, RequestHandler } from "express";
 
-import { User } from "@/generated/prisma/client";
+import { User } from '../generated/prisma/client';
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { parseDurationToSeconds } from "@/utils/parse";
-import { prisma } from "@/config/prisma";
+import { parseDurationToSeconds } from '../utils/parse';
+import { prisma } from '../config/prisma';
 
 export interface AuthRequest extends Request {
   user?: Omit<User, "password"> & {

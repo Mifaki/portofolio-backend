@@ -1,8 +1,8 @@
 import { CreateProjectDto, GetProjectsQueryDto, UpdateProjectDto, UpdateProjectPositionDto } from "./project.dto";
 
-import { httpError } from "@/utils/error";
-import { paginate, toPrismaPage } from "@/utils/pagination";
-import { prisma } from "@/config/prisma";
+import { httpError } from '../../utils/error';
+import { paginate, toPrismaPage } from '../../utils/pagination';
+import { prisma } from '../../config/prisma';
 
 const projectSelect = {
   id: true,
