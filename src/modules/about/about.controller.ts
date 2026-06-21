@@ -33,3 +33,8 @@ export async function deleteAboutHandler(_req: Request, res: Response) {
   const result = await AboutService.deleteAbout();
   R.ok(res, "About deleted successfully", result);
 }
+
+export async function getTechStackCategoriesHandler(_req: Request, res: Response) {
+  const categories = await AboutService.getTechStackCategories();
+  R.ok(res, "Categories retrieved successfully", categories);
+}

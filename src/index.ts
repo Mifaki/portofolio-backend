@@ -10,7 +10,6 @@ app.use(express.json());
 app.use(cors)
 
 registerModule(app);
-
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {

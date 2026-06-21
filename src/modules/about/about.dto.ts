@@ -7,7 +7,7 @@ export interface DescriptionInput {
 
 export interface TechStackInput {
   name: string;
-  iconUrl: string;
+  category: string;
   percentage: number;
   position: number;
 }
@@ -58,7 +58,7 @@ const descriptionInputSchema = Joi.object<DescriptionInput>({
 
 const techStackInputSchema = Joi.object<TechStackInput>({
   name: Joi.string().max(100).required(),
-  iconUrl: Joi.string().uri().required(),
+  category: Joi.string().max(100).required(),
   percentage: Joi.number().integer().min(0).max(100).required(),
   position: Joi.number().integer().min(0).required(),
 });
@@ -112,7 +112,10 @@ const aboutDescriptionSchema = Joi.object({
 const aboutTechStackSchema = Joi.object({
   id: Joi.string().uuid(),
   name: Joi.string(),
-  iconUrl: Joi.string().uri(),
+  category: Joi.object({
+    id: Joi.string().uuid(),
+    name: Joi.string(),
+  }),
   percentage: Joi.number().integer().min(0).max(100),
   position: Joi.number().integer(),
 });

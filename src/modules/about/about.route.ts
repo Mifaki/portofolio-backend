@@ -6,11 +6,13 @@ import {
   createAboutHandler,
   updateAboutHandler,
   deleteAboutHandler,
+  getTechStackCategoriesHandler,
 } from "./about.controller";
 
 const router = Router();
 
 router.get("/", getAboutHandler);
+router.get("/categories", getTechStackCategoriesHandler);
 
 router.use(authenticate);
 

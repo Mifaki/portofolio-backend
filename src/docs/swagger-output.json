@@ -2312,8 +2312,18 @@
                               "name": {
                                 "type": "string"
                               },
-                              "iconUrl": {
-                                "type": "string"
+                              "category": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": false
                               },
                               "percentage": {
                                 "type": "integer",
@@ -2484,8 +2494,18 @@
                               "name": {
                                 "type": "string"
                               },
-                              "iconUrl": {
-                                "type": "string"
+                              "category": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": false
                               },
                               "percentage": {
                                 "type": "integer",
@@ -2635,8 +2655,9 @@
                           "type": "string",
                           "maxLength": 100
                         },
-                        "iconUrl": {
-                          "type": "string"
+                        "category": {
+                          "type": "string",
+                          "maxLength": 100
                         },
                         "percentage": {
                           "type": "integer",
@@ -2650,7 +2671,7 @@
                       },
                       "required": [
                         "name",
-                        "iconUrl",
+                        "category",
                         "percentage",
                         "position"
                       ],
@@ -2823,8 +2844,18 @@
                               "name": {
                                 "type": "string"
                               },
-                              "iconUrl": {
-                                "type": "string"
+                              "category": {
+                                "type": "object",
+                                "properties": {
+                                  "id": {
+                                    "type": "string",
+                                    "format": "uuid"
+                                  },
+                                  "name": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": false
                               },
                               "percentage": {
                                 "type": "integer",
@@ -2977,8 +3008,9 @@
                           "type": "string",
                           "maxLength": 100
                         },
-                        "iconUrl": {
-                          "type": "string"
+                        "category": {
+                          "type": "string",
+                          "maxLength": 100
                         },
                         "percentage": {
                           "type": "integer",
@@ -2992,7 +3024,7 @@
                       },
                       "required": [
                         "name",
-                        "iconUrl",
+                        "category",
                         "percentage",
                         "position"
                       ],
@@ -3134,6 +3166,22 @@
             "bearerAuth": []
           }
         ]
+      }
+    },
+    "/about/categories": {
+      "get": {
+        "tags": [
+          "About"
+        ],
+        "summary": "Get tech stack categories",
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        }
       }
     }
   }

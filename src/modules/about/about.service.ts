@@ -16,7 +16,13 @@ const aboutSelect = {
     orderBy: { position: "asc" as const },
   },
   techStacks: {
-    select: { id: true, name: true, iconUrl: true, percentage: true, position: true },
+    select: {
+      id: true,
+      name: true,
+      category: { select: { id: true, name: true } },
+      percentage: true,
+      position: true,
+    },
     orderBy: { position: "asc" as const },
   },
   images: {
@@ -40,6 +46,39 @@ const aboutSelect = {
   },
 };
 
+async function resolveCategoryIds(
+  techStacks: { name: string; category: string; percentage: number; position: number }[],
+): Promise<{ name: string; categoryId: string; percentage: number; position: number }[]> {
+  const uniqueNames = [...new Set(techStacks.map((t) => t.category))];
+
+  const resolved = await Promise.all(
+    uniqueNames.map((name) =>
+      (prisma as any).techStackCategory.upsert({
+        where: { name },
+        update: {},
+        create: { name },
+        select: { id: true, name: true },
+      }),
+    ),
+  );
+
+  const categoryMap = new Map((resolved as { id: string; name: string }[]).map((c) => [c.name, c.id]));
+
+  return techStacks.map(({ name, category, percentage, position }) => ({
+    name,
+    categoryId: categoryMap.get(category)!,
+    percentage,
+    position,
+  }));
+}
+
+export async function getTechStackCategories() {
+  return (prisma as any).techStackCategory.findMany({
+    select: { id: true, name: true },
+    orderBy: { name: "asc" },
+  }) as Promise<{ id: string; name: string }[]>;
+}
+
 async function findAbout() {
   return prisma.about.findFirst({ where: { deletedAt: null }, select: aboutSelect });
 }
@@ -54,6 +93,10 @@ export async function createAbout(dto: CreateAboutDto) {
   const existing = await findAbout();
   if (existing) throw httpError(409, "About already exists");
 
+  const resolvedTechStacks = dto.techStacks?.length
+    ? await resolveCategoryIds(dto.techStacks)
+    : undefined;
+
   return prisma.about.create({
     data: {
       name: dto.name,
@@ -63,8 +106,8 @@ export async function createAbout(dto: CreateAboutDto) {
       descriptions: dto.descriptions?.length
         ? { create: dto.descriptions.map(({ content, position }) => ({ content, position })) }
         : undefined,
-      techStacks: dto.techStacks?.length
-        ? { create: dto.techStacks.map(({ name, iconUrl, percentage, position }) => ({ name, iconUrl, percentage, position })) }
+      techStacks: resolvedTechStacks?.length
+        ? { create: resolvedTechStacks as any }
         : undefined,
       images: dto.images?.length
         ? { create: dto.images.map(({ imageUrl, position }) => ({ imageUrl, position })) }
@@ -72,15 +115,7 @@ export async function createAbout(dto: CreateAboutDto) {
       workExperiences: dto.workExperiences?.length
         ? {
             create: dto.workExperiences.map(({ company, role, description, location, startMonth, startYear, endMonth, endYear, position }) => ({
-              company,
-              role,
-              description,
-              location,
-              startMonth,
-              startYear,
-              endMonth,
-              endYear,
-              position,
+              company, role, description, location, startMonth, startYear, endMonth, endYear, position,
             })),
           }
         : undefined,
@@ -92,6 +127,10 @@ export async function createAbout(dto: CreateAboutDto) {
 export async function updateAbout(dto: UpdateAboutDto) {
   const about = await findAbout();
   if (!about) throw httpError(404, "About not found");
+
+  const resolvedTechStacks = dto.techStacks !== undefined
+    ? await resolveCategoryIds(dto.techStacks)
+    : undefined;
 
   return prisma.$transaction(async (tx) => {
     if (dto.descriptions !== undefined) {
@@ -117,8 +156,8 @@ export async function updateAbout(dto: UpdateAboutDto) {
         ...(dto.descriptions !== undefined && {
           descriptions: { create: dto.descriptions.map(({ content, position }) => ({ content, position })) },
         }),
-        ...(dto.techStacks !== undefined && {
-          techStacks: { create: dto.techStacks.map(({ name, iconUrl, percentage, position }) => ({ name, iconUrl, percentage, position })) },
+        ...(resolvedTechStacks !== undefined && {
+          techStacks: { create: resolvedTechStacks as any },
         }),
         ...(dto.images !== undefined && {
           images: { create: dto.images.map(({ imageUrl, position }) => ({ imageUrl, position })) },
